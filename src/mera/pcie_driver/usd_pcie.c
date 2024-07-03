@@ -444,7 +444,11 @@ static int pcie_probe(struct pci_dev *pdev, const struct pci_device_id *ent) {
     goto err_unregister_chrdev;
   }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 4, 0)
+  epdev->devclass = class_create(pcie_name);
+#else
   epdev->devclass = class_create(THIS_MODULE, pcie_name);
+#endif
   if (IS_ERR(epdev->devclass)) {
     printk(KERN_ERR SAKURA_PREFIX "Failed to create class for cdev. Aborting.\n");
     ret = -ENODEV;
