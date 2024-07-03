@@ -84,7 +84,11 @@ static int pcie_mmap(struct file *file, struct vm_area_struct *vma) {
     return -EINVAL;
   }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
+  vm_flags_set(vma, VM_LOCKED);
+#else
   vma->vm_flags |= VM_LOCKED;
+#endif
 
   // Calculate page frame number (PFN).
   vma->vm_pgoff = virt_to_phys(epdev->image[minor].map_addr) >> PAGE_SHIFT;
